@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Be My Valentine?</title>
+  <style>
+    :root {
+      --bg1: #ff9ecf;
+      --bg2: #ffd1e6;
+      --card: rgba(255, 255, 255, 0.9);
+      --text: #7a1f4d;
+      --yes: #ff3b88;
+      --no: #a05a7b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Poppins", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top left, var(--bg2), var(--bg1));
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .hearts {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .heart {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: #ff5a9e;
+      transform: rotate(45deg);
+      animation: floatUp linear infinite;
+      opacity: 0.65;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background: inherit;
+      border-radius: 50%;
+    }
+
+    .heart::before { top: -9px; left: 0; }
+    .heart::after { top: 0; left: -9px; }
+
+    @keyframes floatUp {
+      from {
+        transform: translateY(110vh) rotate(45deg) scale(0.8);
+        opacity: 0;
+      }
+      15% { opacity: 0.8; }
+      to {
+        transform: translateY(-15vh) rotate(45deg) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    .card {
+      z-index: 1;
+      background: var(--card);
+      backdrop-filter: blur(4px);
+      border-radius: 22px;
+      padding: 2rem 2.2rem;
+      width: min(92vw, 520px);
+      text-align: center;
+      box-shadow: 0 16px 45px rgba(122, 31, 77, 0.2);
+      position: relative;
+    }
+
+    h1 {
+      margin: 0 0 0.75rem;
+      font-size: clamp(1.55rem, 4.2vw, 2.2rem);
+    }
+
+    p {
+      margin: 0 0 1.2rem;
+      font-size: 1.05rem;
+    }
+
+    .button-area {
+      position: relative;
+      height: 120px;
+      width: 100%;
+      margin-top: 0.25rem;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      cursor: pointer;
+      padding: 0.75rem 1.4rem;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+    }
+
+    button:hover { transform: translateY(-2px); }
+
+    #yesBtn {
+      position: absolute;
+      left: calc(50% - 130px);
+      top: 35px;
+      background: var(--yes);
+    }
+
+    #noBtn {
+      position: absolute;
+      left: calc(50% + 30px);
+      top: 35px;
+      background: var(--no);
+    }
+
+    #message {
+      min-height: 2rem;
+      margin-top: 0.5rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #c2185b;
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts" id="hearts" aria-hidden="true"></div>
+
+  <main class="card">
+    <h1>Will you be my valentine? 💌</h1>
+    <p>You can only choose wisely 😉</p>
+
+    <div class="button-area" id="buttonArea">
+      <button id="yesBtn" type="button">Yes</button>
+      <button id="noBtn" type="button">No</button>
+    </div>
+
+    <div id="message" aria-live="polite"></div>
+  </main>
+
+  <script>
+    const heartsContainer = document.getElementById('hearts');
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const message = document.getElementById('message');
+    const buttonArea = document.getElementById('buttonArea');
+
+    // Create floating hearts in the background.
+    for (let i = 0; i < 35; i++) {
+      const heart = document.createElement('span');
+      heart.className = 'heart';
+      heart.style.left = `${Math.random() * 100}%`;
+      heart.style.animationDuration = `${6 + Math.random() * 9}s`;
+      heart.style.animationDelay = `${Math.random() * 8}s`;
+      heart.style.opacity = `${0.25 + Math.random() * 0.6}`;
+      const size = 10 + Math.random() * 16;
+      heart.style.width = `${size}px`;
+      heart.style.height = `${size}px`;
+      heartsContainer.appendChild(heart);
+    }
+
+    function moveNoButton() {
+      const areaRect = buttonArea.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+
+      const maxX = Math.max(0, areaRect.width - btnRect.width);
+      const maxY = Math.max(0, areaRect.height - btnRect.height);
+
+      const nextX = Math.random() * maxX;
+      const nextY = Math.random() * maxY;
+
+      noBtn.style.left = `${nextX}px`;
+      noBtn.style.top = `${nextY}px`;
+    }
+
+    ['mouseenter', 'pointerdown', 'focus'].forEach((eventName) => {
+      noBtn.addEventListener(eventName, moveNoButton);
+    });
+
+    noBtn.addEventListener('click', moveNoButton);
+
+    yesBtn.addEventListener('click', () => {
+      message.textContent = 'I knew you would say yes 💖';
+    });
+  </script>
+</body>
+</html>
